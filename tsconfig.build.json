@@ -6,7 +6,9 @@
     "declaration": true,
     "declarationDir": "./dist/types",
     "sourceMap": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "incremental": true,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
   "include": ["src/**/*"],
   "exclude": [
