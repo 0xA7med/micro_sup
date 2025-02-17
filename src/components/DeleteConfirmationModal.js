@@ -1,0 +1,12 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { useState } from 'react';
+import { Dialog } from '@headlessui/react';
+import LoadingSpinner from './ui/LoadingSpinner';
+export default function DeleteConfirmationModal({ isOpen, onClose, onConfirm, title, description, showTransferOption = false, transferDescription = '', isLoading = false, }) {
+    const [transferCustomers, setTransferCustomers] = useState(false);
+    return (_jsxs(Dialog, { open: isOpen, onClose: () => !isLoading && onClose(), className: "relative z-50", children: [_jsx("div", { className: "fixed inset-0 bg-black/30", "aria-hidden": "true" }), _jsx("div", { className: "fixed inset-0 flex items-center justify-center p-4", children: _jsxs(Dialog.Panel, { className: "mx-auto max-w-sm rounded bg-white p-6 shadow-xl", children: [_jsx(Dialog.Title, { className: "text-lg font-medium mb-4 text-right", children: title }), _jsx(Dialog.Description, { className: "mb-4 text-gray-600 text-right", children: description }), showTransferOption && (_jsx("div", { className: "mb-4", children: _jsxs("label", { className: "flex items-center justify-end gap-2", children: [_jsx("input", { type: "checkbox", checked: transferCustomers, onChange: (e) => setTransferCustomers(e.target.checked), disabled: isLoading, className: "rounded border-gray-300 text-blue-600 focus:ring-blue-500" }), _jsx("span", { className: "text-sm text-gray-700", children: transferDescription })] }) })), _jsxs("div", { className: "mt-6 flex justify-end gap-3", children: [_jsx("button", { type: "button", onClick: () => onConfirm(transferCustomers), disabled: isLoading, className: `px-4 py-2 rounded text-white transition-colors ${isLoading
+                                        ? 'bg-red-400 cursor-not-allowed'
+                                        : 'bg-red-500 hover:bg-red-600'}`, children: isLoading ? (_jsxs("div", { className: "flex items-center gap-2", children: [_jsx(LoadingSpinner, { className: "w-4 h-4" }), _jsx("span", { children: "\u062C\u0627\u0631\u064A \u0627\u0644\u062D\u0630\u0641..." })] })) : ('حذف') }), _jsx("button", { type: "button", onClick: onClose, disabled: isLoading, className: `px-4 py-2 rounded transition-colors ${isLoading
+                                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                        : 'bg-gray-200 hover:bg-gray-300 text-gray-700'}`, children: "\u0625\u0644\u063A\u0627\u0621" })] })] }) })] }));
+}

@@ -25,7 +25,11 @@
     "error": "An error occurred",
     "clearAll": "Clear All",
     "language": "Change Language",
-    "theme": "Toggle Theme"
+    "theme": "Toggle Theme",
+    "phoneNumber": "Phone Number",
+    "address": "Address",
+    "phonePlaceholder": "Enter phone number",
+    "addressPlaceholder": "Enter address"
   },
   "auth": {
     "login": "Login",
@@ -74,18 +78,26 @@
     "myCustomers": "My Customers"
   },
   "agent": {
-    "add": "Add Representative",
-    "list": "Representatives List",
-    "name": "Representative Name",
-    "customers": "Representative's Customers",
-    "addByAdmin": "Add Representative",
-    "fetchError": "Error fetching representatives"
+    "add": "Add Agent",
+    "addByAdmin": "Add Agent",
+    "list": "Agents List",
+    "customers": "My Customers",
+    "name": "Full Name",
+    "phone": "Phone Number",
+    "address": "Address",
+    "namePlaceholder": "Enter agent's full name",
+    "phonePlaceholder": "Enter phone number",
+    "addressPlaceholder": "Enter address",
+    "formDescription": "Enter agent information",
+    "personalInfo": "Personal Information",
+    "accountInfo": "Account Information"
   },
   "subscription": {
     "monthly": "Monthly",
-    "semiannual": "Semi-annual",
+    "semi-annual": "Semi-Annual",
     "annual": "Annual",
     "permanent": "Permanent",
+    "trial": "Trial",
     "startDateLabel": "Subscription Start Date",
     "endDateLabel": "Subscription End Date",
     "futureDateError": "Start date cannot be in the future",

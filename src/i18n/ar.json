@@ -24,7 +24,11 @@
     "error": "حدث خطأ",
     "clearAll": "مسح الكل",
     "language": "تغيير اللغة",
-    "theme": "تغيير المظهر"
+    "theme": "تغيير المظهر",
+    "phoneNumber": "رقم الهاتف",
+    "address": "العنوان",
+    "phonePlaceholder": "أدخل رقم الهاتف",
+    "addressPlaceholder": "أدخل العنوان"
   },
   "auth": {
     "login": "تسجيل الدخول",
@@ -50,9 +54,10 @@
   },
   "subscription": {
     "monthly": "شهري",
-    "semiannual": "نصف سنوي",
+    "semi-annual": "نصف سنوي",
     "annual": "سنوي",
     "permanent": "دائم",
+    "trial": "تجريبي",
     "startDateLabel": "تاريخ بداية الاشتراك",
     "endDateLabel": "تاريخ نهاية الاشتراك",
     "futureDateError": "لا يمكن أن يكون تاريخ البداية في المستقبل",
@@ -90,10 +95,18 @@
   },
   "agent": {
     "add": "إضافة مندوب",
-    "list": "قائمة المندوبين",
-    "name": "اسم المندوب",
-    "customers": "عملاء المندوب",
     "addByAdmin": "إضافة مندوب",
+    "list": "قائمة المندوبين",
+    "customers": "عملائي",
+    "name": "الاسم الكامل",
+    "phone": "رقم الهاتف",
+    "address": "العنوان",
+    "namePlaceholder": "أدخل الاسم الكامل للمندوب",
+    "phonePlaceholder": "أدخل رقم الهاتف",
+    "addressPlaceholder": "أدخل العنوان",
+    "formDescription": "أدخل معلومات المندوب",
+    "personalInfo": "المعلومات الشخصية",
+    "accountInfo": "معلومات الحساب",
     "fetchError": "حدث خطأ في جلب المندوبين"
   }
 }
