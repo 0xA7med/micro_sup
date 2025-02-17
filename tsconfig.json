@@ -15,12 +15,16 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": ".",
     "composite": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src/**/*", "server/**/*"],
   "exclude": ["node_modules", "dist"]
 }
