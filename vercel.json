@@ -1,25 +1,30 @@
 {
   "version": 2,
-  "buildCommand": "npm run build:all",
-  "outputDirectory": "dist",
-  "installCommand": "npm install",
+  "framework": "vite",
   "builds": [
     {
       "src": "package.json",
+      "use": "@vercel/static-build"
+    },
+    {
+      "src": "server/index.ts",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/dist/server/index.js"
-    },
-    {
-      "handle": "filesystem"
+      "dest": "/server/index.ts"
     },
     {
       "src": "/(.*)",
-      "dest": "/dist/index.html"
+      "dest": "/$1",
+      "continue": true
+    },
+    {
+      "src": "/[^.]+",
+      "dest": "/index.html",
+      "status": 200
     }
   ]
 }

@@ -8,12 +8,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build:clean": "rimraf dist",
-    "build:types": "tsc -p tsconfig.build.json",
-    "build:vite": "vite build",
-    "build:server": "tsc -p tsconfig.server.json",
-    "build": "npm run build:clean && npm run build:types && npm run build:vite",
-    "build:all": "npm run build:clean && npm run build:types && npm run build:vite && npm run build:server",
+    "build": "tsc && vite build",
+    "vercel-build": "prisma generate && npm run build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "server": "npx tsx server/index.ts"
