@@ -111,167 +111,70 @@ export default function RepresentativeList() {
 
   const dateLocale = language === 'ar' ? arSA : enUS;
 
-  const renderGridView = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-      {filteredRepresentatives.map((representative) => (
-        <div
-          key={representative.id}
-          className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-3 rtl:space-x-reverse">
-              <UserCircle className="h-12 w-12 text-indigo-500" />
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {representative.fullName}
-                </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  @{representative.username}
-                </p>
-              </div>
+  const columns = [
+    {
+      title: t.agent.name,
+      dataIndex: 'fullName',
+      key: 'fullName',
+      filteredValue: [searchTerm],
+      onFilter: (value: string, record: User) =>
+        record.fullName.toLowerCase().includes(value.toLowerCase()) ||
+        record.username.toLowerCase().includes(value.toLowerCase()) ||
+        (record.email && record.email.toLowerCase().includes(value.toLowerCase())) ||
+        (record.phone && record.phone.toLowerCase().includes(value.toLowerCase())),
+    },
+    {
+      title: t.common.contact,
+      key: 'contact',
+      render: (_: any, record: User) => (
+        <div className="space-y-1">
+          {record.phone && (
+            <div className="flex items-center">
+              <Phone className="h-4 w-4 mr-2 text-gray-400" />
+              {record.phone}
             </div>
-            <div className="flex space-x-2 rtl:space-x-reverse">
-              <button
-                onClick={() => handleEdit(representative)}
-                className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
-              >
-                <Edit className="h-5 w-5" />
-              </button>
-              <button
-                onClick={() => {
-                  setRepresentativeToDelete(representative);
-                  setShowDeleteModal(true);
-                }}
-                className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-              >
-                <Trash2 className="h-5 w-5" />
-              </button>
+          )}
+          {record.email && (
+            <div className="flex items-center">
+              <Mail className="h-4 w-4 mr-2 text-gray-400" />
+              {record.email}
             </div>
-          </div>
-          
-          <div className="space-y-2">
-            {representative.phone && (
-              <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
-                <Phone className="h-4 w-4 mr-2" />
-                {representative.phone}
-              </div>
-            )}
-            {representative.email && (
-              <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
-                <Mail className="h-4 w-4 mr-2" />
-                {representative.email}
-              </div>
-            )}
-            <div className="text-xs text-gray-500 dark:text-gray-400 mt-4">
-              {t.common.createdAt}:{' '}
-              {format(new Date(representative.created_at), 'PPP', {
-                locale: dateLocale,
-              })}
-            </div>
-          </div>
+          )}
         </div>
-      ))}
-    </div>
-  );
-
-  const renderTableView = () => (
-    <div className="overflow-x-auto mt-6">
-      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-        <thead className="bg-gray-50 dark:bg-gray-700">
-          <tr>
-            <th
-              scope="col"
-              className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-              onClick={() => handleSort('fullName')}
-            >
-              <div className="flex items-center gap-2">
-                {t.agent.name}
-                <ArrowUpDown className="h-4 w-4" />
-              </div>
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-              onClick={() => handleSort('username')}
-            >
-              <div className="flex items-center gap-2">
-                {t.auth.username}
-                <ArrowUpDown className="h-4 w-4" />
-              </div>
-            </th>
-            <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-              {t.common.contact}
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-              onClick={() => handleSort('created_at')}
-            >
-              <div className="flex items-center gap-2">
-                {t.common.createdAt}
-                <ArrowUpDown className="h-4 w-4" />
-              </div>
-            </th>
-            <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-              {t.common.actions}
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-          {filteredRepresentatives.map((representative) => (
-            <tr key={representative.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                {representative.fullName}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                {representative.username}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                <div className="space-y-1">
-                  {representative.phone && (
-                    <div className="flex items-center">
-                      <Phone className="h-4 w-4 mr-2 text-gray-400" />
-                      {representative.phone}
-                    </div>
-                  )}
-                  {representative.email && (
-                    <div className="flex items-center">
-                      <Mail className="h-4 w-4 mr-2 text-gray-400" />
-                      {representative.email}
-                    </div>
-                  )}
-                </div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                {format(new Date(representative.created_at), 'PPP', {
-                  locale: dateLocale,
-                })}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <div className="flex justify-end space-x-2 rtl:space-x-reverse">
-                  <button
-                    onClick={() => handleEdit(representative)}
-                    className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
-                  >
-                    <Edit className="h-5 w-5" />
-                  </button>
-                  <button
-                    onClick={() => {
-                      setRepresentativeToDelete(representative);
-                      setShowDeleteModal(true);
-                    }}
-                    className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+      ),
+    },
+    {
+      title: t.common.createdAt,
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: (date: string) => format(new Date(date), 'PPP', {
+        locale: dateLocale,
+      }),
+    },
+    {
+      title: t.common.actions,
+      key: 'action',
+      render: (_: any, record: User) => (
+        <div className="flex justify-end space-x-2 rtl:space-x-reverse">
+          <button
+            onClick={() => handleEdit(record)}
+            className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
+          >
+            <Edit className="h-5 w-5" />
+          </button>
+          <button
+            onClick={() => {
+              setRepresentativeToDelete(record);
+              setShowDeleteModal(true);
+            }}
+            className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+          >
+            <Trash2 className="h-5 w-5" />
+          </button>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <Layout title={t.agent.list}>
@@ -353,9 +256,98 @@ export default function RepresentativeList() {
               {t.agent.noResults}
             </div>
           ) : viewMode === 'grid' ? (
-            renderGridView()
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+              {filteredRepresentatives.map((representative) => (
+                <div
+                  key={representative.id}
+                  className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                      <UserCircle className="h-12 w-12 text-indigo-500" />
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                          {representative.fullName}
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          @{representative.username}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex space-x-2 rtl:space-x-reverse">
+                      <button
+                        onClick={() => handleEdit(representative)}
+                        className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300"
+                      >
+                        <Edit className="h-5 w-5" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          setRepresentativeToDelete(representative);
+                          setShowDeleteModal(true);
+                        }}
+                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                      >
+                        <Trash2 className="h-5 w-5" />
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    {representative.phone && (
+                      <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
+                        <Phone className="h-4 w-4 mr-2" />
+                        {representative.phone}
+                      </div>
+                    )}
+                    {representative.email && (
+                      <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
+                        <Mail className="h-4 w-4 mr-2" />
+                        {representative.email}
+                      </div>
+                    )}
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-4">
+                      {t.common.createdAt}:{' '}
+                      {format(new Date(representative.created_at), 'PPP', {
+                        locale: dateLocale,
+                      })}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
-            renderTableView()
+            <div className="overflow-x-auto mt-6">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-700">
+                  <tr>
+                    {columns.map((column) => (
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                        key={column.key}
+                      >
+                        {column.title}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                  {filteredRepresentatives.map((representative) => (
+                    <tr key={representative.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                      {columns.map((column) => (
+                        <td
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white"
+                          key={column.key}
+                        >
+                          {column.render ? column.render(_, representative) : representative[column.dataIndex]}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
 
