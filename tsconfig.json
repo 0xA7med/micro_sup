@@ -13,11 +13,17 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "noEmit": true
   },
+  "include": ["src", "server"],
   "exclude": ["node_modules", "dist"],
-  "include": ["src"],
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
