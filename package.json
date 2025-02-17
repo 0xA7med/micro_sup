@@ -8,7 +8,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc --build tsconfig.json && vite build",
+    "build:server": "tsc --build tsconfig.server.json",
+    "build:all": "npm run build && npm run build:server",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "server": "npx tsx server/index.ts"
