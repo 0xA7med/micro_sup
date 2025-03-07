@@ -128,7 +128,7 @@ export default function RepresentativeList() {
     {
       title: t.common.contact,
       key: 'contact',
-      render: (_: any, record: User) => (
+      render: (record: User) => (
         <div className="space-y-1">
           {record.phone && (
             <div className="flex items-center">
@@ -149,9 +149,13 @@ export default function RepresentativeList() {
       title: t.common.createdAt,
       dataIndex: 'createdAt',
       key: 'createdAt',
-      render: (date: string) => format(new Date(date), 'PPP', {
-        locale: dateLocale,
-      }),
+      render: (record: User) => (
+        <span>
+          {format(new Date(record.createdAt), 'PPP', {
+            locale: dateLocale,
+          })}
+        </span>
+      ),
     },
     {
       title: t.common.actions,

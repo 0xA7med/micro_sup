@@ -143,11 +143,11 @@ const initDb = async () => {
     // Try to open the database
     db = new AppDatabase();
     await db.open();
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error opening database:', error);
     
     // If there's a version error, delete the old database and try again
-    if (error.name === 'VersionError') {
+    if (error instanceof Error && error.name === 'VersionError') {
       await deleteOldDatabase();
       db = new AppDatabase();
       await db.open();

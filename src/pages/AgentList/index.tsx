@@ -170,7 +170,7 @@ export default function AgentList() {
 
   if (loading) {
     return (
-      <Layout>
+      <Layout title={t.agentList}>
         <div className="flex flex-col items-center justify-center h-64">
           <LoadingSpinner className="animate-spin w-10 h-10 text-blue-500" />
           <p className="mt-4 text-gray-600 transition-opacity animate-pulse">
@@ -183,7 +183,7 @@ export default function AgentList() {
 
   if (error) {
     return (
-      <Layout>
+      <Layout title={t.agentList}>
         <div className="flex flex-col items-center justify-center h-64 text-center">
           <div className="text-red-500 mb-4 font-semibold">
             ⚠️ {error}
@@ -200,7 +200,7 @@ export default function AgentList() {
   }
 
   return (
-    <Layout>
+    <Layout title={t.agentList}>
       <AgentListHeader
         searchValue={searchValue}
         onSearchChange={setSearchValue}

@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
-import type { Database } from '../lib/database.types';
+import { db } from '../db/database';
+import type { Customer } from '../db/database';
 import { useAuthStore } from '../store/authStore';
-
-type Customer = Database['public']['Tables']['customers']['Row'];
 
 export function useCustomers(filter?: 'expiring' | 'active') {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -15,12 +13,10 @@ export function useCustomers(filter?: 'expiring' | 'active') {
 
     const fetchCustomers = async () => {
       try {
-        let query = supabase
-          .from('customers')
-          .select();
+        let query = db.customers.toCollection();
 
         if (user.role !== 'admin') {
-          query = query.eq('created_by', user.id);
+          query = query.filter(customer => customer.createdBy === user.id);
         }
 
         if (filter === 'expiring') {
@@ -28,16 +24,19 @@ export function useCustomers(filter?: 'expiring' | 'active') {
           const twentyDaysFromNow = new Date();
           twentyDaysFromNow.setDate(now.getDate() + 20);
           
-          query = query
-            .gte('subscription_end', now.toISOString())
-            .lte('subscription_end', twentyDaysFromNow.toISOString());
+          query = query.filter(customer => {
+            const subscriptionEnd = new Date(customer.subscriptionEnd);
+            return subscriptionEnd >= now && subscriptionEnd <= twentyDaysFromNow;
+          });
         } else if (filter === 'active') {
-          query = query.gte('subscription_end', new Date().toISOString());
+          const now = new Date();
+          query = query.filter(customer => {
+            const subscriptionEnd = new Date(customer.subscriptionEnd);
+            return subscriptionEnd >= now;
+          });
         }
 
-        const { data, error } = await query.order('created_at', { ascending: false });
-
-        if (error) throw error;
+        const data = await query.reverse().sortBy('createdAt');
         setCustomers(data || []);
       } catch (error) {
         console.error('Error fetching customers:', error);
@@ -48,30 +47,67 @@ export function useCustomers(filter?: 'expiring' | 'active') {
 
     fetchCustomers();
 
-    // Set up real-time subscription
-    const subscription = supabase
-      .channel('custom-all-channel')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'customers' },
-        (payload) => {
-          if (payload.eventType === 'INSERT') {
-            setCustomers(prev => [payload.new as Customer, ...prev]);
-          } else if (payload.eventType === 'DELETE') {
-            setCustomers(prev => prev.filter(customer => customer.id !== payload.old.id));
-          } else if (payload.eventType === 'UPDATE') {
-            setCustomers(prev => prev.map(customer => 
-              customer.id === payload.new.id ? payload.new as Customer : customer
-            ));
-          }
-        }
-      )
-      .subscribe();
+    // Set up a polling mechanism to refresh data periodically
+    const intervalId = setInterval(fetchCustomers, 30000); // Refresh every 30 seconds
 
-    return () => {
-      subscription.unsubscribe();
-    };
+    return () => clearInterval(intervalId);
   }, [user, filter]);
 
-  return { customers, loading };
+  const createCustomer = async (customerData: Omit<Customer, 'id' | 'createdAt'>) => {
+    try {
+      const newCustomer = {
+        ...customerData,
+        createdAt: new Date()
+      };
+      
+      const id = await db.customers.add(newCustomer);
+      const addedCustomer = await db.customers.get(id);
+      
+      if (addedCustomer) {
+        setCustomers(prev => [addedCustomer, ...prev]);
+      }
+      
+      return { data: addedCustomer, error: null };
+    } catch (error) {
+      console.error('Error creating customer:', error);
+      return { data: null, error };
+    }
+  };
+
+  const updateCustomer = async (id: number, customerData: Partial<Customer>) => {
+    try {
+      await db.customers.update(id, customerData);
+      const updatedCustomer = await db.customers.get(id);
+      
+      if (updatedCustomer) {
+        setCustomers(prev => 
+          prev.map(customer => customer.id === id ? updatedCustomer : customer)
+        );
+      }
+      
+      return { data: updatedCustomer, error: null };
+    } catch (error) {
+      console.error('Error updating customer:', error);
+      return { data: null, error };
+    }
+  };
+
+  const deleteCustomer = async (id: number) => {
+    try {
+      await db.customers.delete(id);
+      setCustomers(prev => prev.filter(customer => customer.id !== id));
+      return { error: null };
+    } catch (error) {
+      console.error('Error deleting customer:', error);
+      return { error };
+    }
+  };
+
+  return {
+    customers,
+    loading,
+    createCustomer,
+    updateCustomer,
+    deleteCustomer
+  };
 }

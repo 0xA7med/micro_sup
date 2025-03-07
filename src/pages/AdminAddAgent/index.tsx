@@ -59,7 +59,7 @@ export default function AdminAddAgent() {
   };
 
   return (
-    <Layout>
+    <Layout title={t.agent.addNewAgent}>
       <PageHeader title={t.agent.addNew} />
       <form onSubmit={handleSubmit} className="max-w-xl mx-auto mt-8">
         <div className="space-y-8">

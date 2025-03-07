@@ -1,7 +1,53 @@
-import { createClient } from '@supabase/supabase-js';
-import type { Database } from './database.types';
+// Mock supabase client for compatibility
+// This file exists to maintain compatibility with code that might still reference supabase
+// but we're using local database (Dexie) instead
 
-const supabaseUrl = 'https://jwizdetcrrcwvylctuuj.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp3aXpkZXRjcnJjd3Z5bGN0dXVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQzODc4NzAsImV4cCI6MjA0OTk2Mzg3MH0.FhZQ8VV0SeC0loLcyY7HR7g5CUe5aJ_k_eI4Xjnl26c';
-
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+export const supabase = {
+  from: () => ({
+    select: () => ({
+      eq: () => ({
+        single: async () => null,
+        data: null,
+        error: new Error('Supabase is not used in this version. Using local database instead.')
+      }),
+      order: () => ({
+        data: null,
+        error: new Error('Supabase is not used in this version. Using local database instead.')
+      })
+    }),
+    insert: () => ({
+      select: () => ({
+        single: async () => null,
+        data: null,
+        error: new Error('Supabase is not used in this version. Using local database instead.')
+      })
+    }),
+    update: () => ({
+      eq: () => ({
+        select: () => ({
+          single: async () => null,
+          data: null,
+          error: new Error('Supabase is not used in this version. Using local database instead.')
+        })
+      })
+    }),
+    delete: () => ({
+      eq: () => ({
+        data: null,
+        error: new Error('Supabase is not used in this version. Using local database instead.')
+      })
+    })
+  }),
+  auth: {
+    signIn: async () => ({
+      data: null,
+      error: new Error('Supabase is not used in this version. Using local database instead.')
+    }),
+    signOut: async () => ({
+      error: null
+    }),
+    onAuthStateChange: () => ({
+      data: { subscription: { unsubscribe: () => {} } }
+    })
+  }
+};

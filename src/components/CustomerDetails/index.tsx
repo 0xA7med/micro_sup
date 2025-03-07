@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { useI18nStore } from '../../store/i18nStore';
 import { useAuthStore } from '../../store/authStore';
 import { db } from '../../db/database';
+import type { Customer } from '../../db/database';
 import Modal from '../ui/Modal';
 import CustomerHeader from './CustomerHeader';
 import CustomerBasicInfo from './CustomerBasicInfo';
@@ -11,12 +12,12 @@ import CustomerDates from './CustomerDates';
 import CustomerActions from './CustomerActions';
 import DeleteConfirmationModal from '../DeleteConfirmationModal';
 
-interface CustomerDetailsProps {
-  customer: any;
+export interface CustomerDetailsModalProps {
+  customer: Customer;
   onClose: () => void;
   isEditing?: boolean;
   onDelete?: (id: number) => Promise<void>;
-  onUpdate?: (updatedCustomer: any) => Promise<void>;
+  onUpdate?: (updatedCustomer: Customer) => Promise<void>;
 }
 
 export default function CustomerDetails({
@@ -25,7 +26,7 @@ export default function CustomerDetails({
   isEditing: initialIsEditing = false,
   onDelete,
   onUpdate
-}: CustomerDetailsProps) {
+}: CustomerDetailsModalProps) {
   const [copiedCode, setCopiedCode] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState(initialIsEditing);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
