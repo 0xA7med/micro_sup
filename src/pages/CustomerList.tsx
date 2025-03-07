@@ -144,7 +144,7 @@ export default function CustomerList() {
                   <th
                     scope="col"
                     className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                    onClick={() => handleSort('subscriptionType')}
+                    onClick={() => handleSort('subscription_type')}
                   >
                     <div className="flex items-center gap-2">
                       {t.customer.subscriptionType}

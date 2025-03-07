@@ -3,6 +3,7 @@ import { Monitor, Smartphone } from 'lucide-react';
 import CustomerField from './CustomerField';
 import CustomerInput from '../CustomerInput';
 import { useI18nStore } from '../../store/i18nStore';
+import { Customer } from '../../db/database';
 
 const SUBSCRIPTION_TYPES = ['semi-annual', 'annual', 'permanent', 'trial'] as const;
 const VERSION_TYPES = ['android', 'pc'] as const;
@@ -11,11 +12,7 @@ type SubscriptionType = typeof SUBSCRIPTION_TYPES[number];
 type VersionType = typeof VERSION_TYPES[number];
 
 interface CustomerSubscriptionInfoProps {
-  customer: {
-    subscription_type: SubscriptionType;
-    version_type: VersionType;
-    device_count: number;
-  };
+  customer: Customer;
   isEditing: boolean;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 }

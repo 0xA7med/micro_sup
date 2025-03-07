@@ -58,9 +58,9 @@ export default function CustomerDetails({
         phone: editedCustomer.phone,
         address: editedCustomer.address,
         activationCode: editedCustomer.activationCode,
-        subscriptionType: editedCustomer.subscriptionType,
-        deviceCount: editedCustomer.deviceCount,
-        versionType: editedCustomer.versionType,
+        subscription_type: editedCustomer.subscription_type,
+        device_count: editedCustomer.device_count,
+        version_type: editedCustomer.version_type,
         notes: editedCustomer.notes
       });
       
