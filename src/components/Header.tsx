@@ -5,11 +5,11 @@ import { useThemeStore } from '../store/themeStore';
 import Button from './ui/Button';
 
 export default function Header() {
-  const { isDarkMode, toggleDarkMode } = useThemeStore();
-  const { currentLanguage, setLanguage, t } = useI18nStore();
+  const { theme, toggleTheme } = useThemeStore();
+  const { language, setLanguage, translations: t } = useI18nStore();
 
   const handleLanguageChange = () => {
-    const newLang = currentLanguage === 'ar' ? 'en' : 'ar';
+    const newLang = language === 'ar' ? 'en' : 'ar';
     setLanguage(newLang);
     document.documentElement.dir = newLang === 'ar' ? 'rtl' : 'ltr';
     document.documentElement.lang = newLang;
@@ -24,14 +24,14 @@ export default function Header() {
             onClick={handleLanguageChange}
             className="flex items-center gap-2"
           >
-            {currentLanguage === 'ar' ? 'English' : 'عربي'}
+            {language === 'ar' ? 'English' : 'عربي'}
           </Button>
           <Button
             variant="outline"
-            onClick={toggleDarkMode}
+            onClick={toggleTheme}
             className="flex items-center gap-2"
           >
-            {isDarkMode ? (
+            {theme === 'dark' ? (
               <Sun className="h-5 w-5" />
             ) : (
               <Moon className="h-5 w-5" />

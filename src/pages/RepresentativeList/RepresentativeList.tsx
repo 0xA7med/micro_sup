@@ -32,9 +32,9 @@ export default function RepresentativeList() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [representativeToDelete, setRepresentativeToDelete] = useState<User | null>(null);
   const [sortConfig, setSortConfig] = useState<{
-    key: string;
+    key: keyof User;
     direction: 'asc' | 'desc';
-  }>({ key: 'created_at', direction: 'desc' });
+  }>({ key: 'createdAt', direction: 'desc' });
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export default function RepresentativeList() {
     fetchRepresentatives();
   }, [t.agent.fetchError]);
 
-  const handleSort = (key: string) => {
+  const handleSort = (key: keyof User) => {
     setSortConfig((prevConfig) => ({
       key,
       direction:
@@ -99,8 +99,8 @@ export default function RepresentativeList() {
       );
     })
     .sort((a, b) => {
-      const aValue = a[sortConfig.key as keyof User];
-      const bValue = b[sortConfig.key as keyof User];
+      const aValue = a[sortConfig.key];
+      const bValue = b[sortConfig.key];
 
       if (!aValue || !bValue) return 0;
 
@@ -147,8 +147,8 @@ export default function RepresentativeList() {
     },
     {
       title: t.common.createdAt,
-      dataIndex: 'created_at',
-      key: 'created_at',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
       render: (date: string) => format(new Date(date), 'PPP', {
         locale: dateLocale,
       }),
@@ -310,7 +310,7 @@ export default function RepresentativeList() {
                     )}
                     <div className="text-xs text-gray-500 dark:text-gray-400 mt-4">
                       {t.common.createdAt}:{' '}
-                      {format(new Date(representative.created_at), 'PPP', {
+                      {format(new Date(representative.createdAt), 'PPP', {
                         locale: dateLocale,
                       })}
                     </div>

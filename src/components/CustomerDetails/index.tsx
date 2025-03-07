@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import { supabase } from '../../lib/supabase';
 import { useI18nStore } from '../../store/i18nStore';
 import { useAuthStore } from '../../store/authStore';
+import { db } from '../../db/database';
 import Modal from '../ui/Modal';
 import CustomerHeader from './CustomerHeader';
 import CustomerBasicInfo from './CustomerBasicInfo';
@@ -16,13 +16,15 @@ interface CustomerDetailsProps {
   onClose: () => void;
   isEditing?: boolean;
   onDelete?: (id: number) => Promise<void>;
+  onUpdate?: (updatedCustomer: any) => Promise<void>;
 }
 
 export default function CustomerDetails({
   customer: initialCustomer,
   onClose,
   isEditing: initialIsEditing = false,
-  onDelete
+  onDelete,
+  onUpdate
 }: CustomerDetailsProps) {
   const [copiedCode, setCopiedCode] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState(initialIsEditing);
@@ -40,33 +42,34 @@ export default function CustomerDetails({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setEditedCustomer(prev => ({ ...prev, [name]: value }));
+    setEditedCustomer((prev: any) => ({ ...prev, [name]: value }));
   };
 
   const handleSave = async () => {
     if (!editedCustomer?.id) return;
     
     try {
-      const { error } = await supabase
-        .from('customers')
-        .update({
-          customer_name: editedCustomer.customer_name,
-          business_name: editedCustomer.business_name,
-          business_type: editedCustomer.business_type,
-          phone: editedCustomer.phone,
-          address: editedCustomer.address,
-          activation_code: editedCustomer.activation_code,
-          subscription_type: editedCustomer.subscription_type,
-          device_count: editedCustomer.device_count,
-          version_type: editedCustomer.version_type,
-          notes: editedCustomer.notes
-        })
-        .eq('id', editedCustomer.id);
-
-      if (error) throw error;
+      // استخدام قاعدة البيانات المحلية بدلاً من supabase
+      await db.customers.update(editedCustomer.id, {
+        customerName: editedCustomer.customerName,
+        businessName: editedCustomer.businessName,
+        businessType: editedCustomer.businessType,
+        phone: editedCustomer.phone,
+        address: editedCustomer.address,
+        activationCode: editedCustomer.activationCode,
+        subscriptionType: editedCustomer.subscriptionType,
+        deviceCount: editedCustomer.deviceCount,
+        versionType: editedCustomer.versionType,
+        notes: editedCustomer.notes
+      });
       
       toast.success('تم تحديث بيانات العميل بنجاح');
       setIsEditing(false);
+      
+      // استدعاء دالة التحديث إذا كانت موجودة
+      if (onUpdate) {
+        await onUpdate(editedCustomer);
+      }
     } catch (error) {
       console.error('Error updating customer:', error);
       toast.error('حدث خطأ أثناء تحديث بيانات العميل');
@@ -102,8 +105,8 @@ export default function CustomerDetails({
           />
 
           <CustomerDates
-            startDate={editedCustomer.subscription_start}
-            endDate={editedCustomer.subscription_end}
+            startDate={editedCustomer.subscriptionStart}
+            endDate={editedCustomer.subscriptionEnd}
           />
         </div>
       </Modal>
@@ -111,7 +114,7 @@ export default function CustomerDetails({
       {showDeleteConfirm && onDelete && (
         <DeleteConfirmationModal
           title="تأكيد حذف العميل"
-          message={`هل أنت متأكد من حذف العميل ${editedCustomer.customer_name}؟`}
+          message={`هل أنت متأكد من حذف العميل ${editedCustomer.customerName}؟`}
           confirmLabel="حذف العميل"
           onConfirm={() => onDelete(editedCustomer.id!)}
           onClose={() => setShowDeleteConfirm(false)}

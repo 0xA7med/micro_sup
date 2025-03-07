@@ -3,27 +3,41 @@ import { Dialog } from '@headlessui/react';
 import LoadingSpinner from './ui/LoadingSpinner';
 
 interface DeleteConfirmationModalProps {
-  isOpen: boolean;
+  isOpen?: boolean;
   onClose: () => void;
-  onConfirm: (transferCustomers: boolean) => void;
+  onConfirm: (transferCustomers?: boolean) => void;
   title: string;
-  description: string;
+  description?: string;
+  message?: string;
+  confirmLabel?: string;
   showTransferOption?: boolean;
   transferDescription?: string;
   isLoading?: boolean;
+  onCancel?: () => void;
 }
 
 export default function DeleteConfirmationModal({
-  isOpen,
+  isOpen = false,
   onClose,
   onConfirm,
   title,
-  description,
+  description = '',
+  message,
+  confirmLabel = 'حذف',
   showTransferOption = false,
   transferDescription = '',
   isLoading = false,
+  onCancel,
 }: DeleteConfirmationModalProps) {
   const [transferCustomers, setTransferCustomers] = useState(false);
+
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel();
+    } else {
+      onClose();
+    }
+  };
 
   return (
     <Dialog
@@ -40,7 +54,7 @@ export default function DeleteConfirmationModal({
           </Dialog.Title>
 
           <Dialog.Description className="mb-4 text-gray-600 text-right">
-            {description}
+            {message || description}
           </Dialog.Description>
 
           {showTransferOption && (
@@ -75,12 +89,12 @@ export default function DeleteConfirmationModal({
                   <span>جاري الحذف...</span>
                 </div>
               ) : (
-                'حذف'
+                confirmLabel
               )}
             </button>
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleCancel}
               disabled={isLoading}
               className={`px-4 py-2 rounded transition-colors ${
                 isLoading
