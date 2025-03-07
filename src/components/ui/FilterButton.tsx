@@ -43,7 +43,7 @@ export default function FilterButton({ label, options, value, onChange, icon }: 
             : 'border-gray-300 hover:border-gray-400'
         } transition-colors duration-200`}
       >
-        {typeof icon === 'function' ? icon() : icon || <Filter className="h-4 w-4" />}
+        {React.isValidElement(icon) ? icon : icon || <Filter className="h-4 w-4" />}
         <span className={`text-sm ${
           isDarkMode ? 'text-gray-200' : 'text-gray-700'
         }`}>

@@ -65,8 +65,8 @@ class AppDatabase extends Dexie {
     });
 
     // Handle version upgrades
-    this.version(2).upgrade(tx => {
-      return tx.customers.toCollection().modify(customer => {
+    this.version(2).upgrade(transaction => {
+      return transaction.table('customers').toCollection().modify((customer: Customer) => {
         if (!customer.businessType) customer.businessType = '';
         if (!customer.activationCode) customer.activationCode = '';
         if (!customer.subscriptionType) customer.subscriptionType = 'Monthly';
@@ -76,20 +76,22 @@ class AppDatabase extends Dexie {
       });
     });
 
-    this.version(3).upgrade(tx => {
-      return tx.customers.toCollection().modify(customer => {
+    this.version(3).upgrade(transaction => {
+      return transaction.table('customers').toCollection().modify((customer: Customer) => {
         if (!customer.versionType) customer.versionType = 'android';
       });
     });
 
-    this.version(4).upgrade(tx => {
-      return tx.customers.toCollection().modify(customer => {
-        if (customer.subscriptionType === 'Trial') customer.subscriptionType = 'Monthly';
+    this.version(4).upgrade(transaction => {
+      return transaction.table('customers').toCollection().modify((customer: Customer) => {
+        if (customer.subscriptionType === 'Trial' as any) {
+          customer.subscriptionType = 'Monthly';
+        }
       });
     });
 
-    this.version(5).upgrade(tx => {
-      return tx.users.toCollection().modify(user => {
+    this.version(5).upgrade(transaction => {
+      return transaction.table('users').toCollection().modify((user: User) => {
         if (!user.email) user.email = '';
         if (!user.phone) user.phone = '';
         if (!user.address) user.address = '';
@@ -99,10 +101,10 @@ class AppDatabase extends Dexie {
     // Initialize admin user if needed
     this.on('ready', async () => {
       try {
-        const adminCount = await this.users.where('username').equals('admin').count();
+        const adminCount = await this.table('users').where('username').equals('admin').count();
         
         if (adminCount === 0) {
-          await this.users.add({
+          await this.table('users').add({
             username: 'admin',
             password: 'admin123',
             fullName: 'مدير النظام',

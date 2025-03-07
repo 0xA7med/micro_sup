@@ -342,7 +342,7 @@ export default function RepresentativeList() {
                           className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white"
                           key={column.key}
                         >
-                          {column.render ? column.render(_, representative) : representative[column.dataIndex]}
+                          {column.render ? column.render(representative) : representative[column.dataIndex as keyof User]}
                         </td>
                       ))}
                     </tr>
@@ -355,11 +355,15 @@ export default function RepresentativeList() {
 
         {showDeleteModal && (
           <DeleteConfirmationModal
-            onConfirm={handleDelete}
-            onCancel={() => {
+            isOpen={showDeleteModal}
+            onClose={() => {
               setShowDeleteModal(false);
               setRepresentativeToDelete(null);
             }}
+            onConfirm={handleDelete}
+            title={t.agent.deleteTitle}
+            message={t.agent.deleteConfirmation}
+            description={representativeToDelete?.fullName}
           />
         )}
       </div>
