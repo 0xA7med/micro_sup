@@ -12,6 +12,7 @@ interface AuthStore {
   user: User | null;
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
+  setUser: (user: User) => void;
 }
 
 const API_URL = 'http://localhost:3001';
@@ -51,4 +52,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   logout: async () => {
     set({ user: null });
   },
+  setUser: (user) => {
+    set({ user });
+  }
 }));

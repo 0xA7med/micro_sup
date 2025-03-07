@@ -105,7 +105,7 @@ export default function NewCustomer() {
   };
 
   return (
-    <Layout>
+    <Layout title={t.customer.add}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <PageHeader
           title={t.customer.add}

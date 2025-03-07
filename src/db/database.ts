@@ -26,6 +26,9 @@ export interface User {
   fullName: string;
   role: 'admin' | 'representative';
   createdAt: Date;
+  email?: string;
+  phone?: string;
+  address?: string;
 }
 
 class AppDatabase extends Dexie {
@@ -56,6 +59,11 @@ class AppDatabase extends Dexie {
       users: '++id, username, fullName, role, createdAt'
     });
 
+    this.version(5).stores({
+      customers: '++id, customerName, businessName, businessType, phone, activationCode, subscriptionEnd, subscriptionType, createdAt, createdBy, agentName, versionType',
+      users: '++id, username, fullName, role, createdAt, email, phone, address'
+    });
+
     // Handle version upgrades
     this.version(2).upgrade(tx => {
       return tx.customers.toCollection().modify(customer => {
@@ -80,6 +88,14 @@ class AppDatabase extends Dexie {
       });
     });
 
+    this.version(5).upgrade(tx => {
+      return tx.users.toCollection().modify(user => {
+        if (!user.email) user.email = '';
+        if (!user.phone) user.phone = '';
+        if (!user.address) user.address = '';
+      });
+    });
+
     // Initialize admin user if needed
     this.on('ready', async () => {
       try {
@@ -91,7 +107,10 @@ class AppDatabase extends Dexie {
             password: 'admin123',
             fullName: 'مدير النظام',
             role: 'admin',
-            createdAt: new Date()
+            createdAt: new Date(),
+            email: '',
+            phone: '',
+            address: ''
           });
         }
       } catch (error) {

@@ -3,6 +3,7 @@ import { stats } from '../../lib/apiClient';
 import Layout from '../../components/Layout';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { useAuthStore } from '../../store/authStore';
+import { useI18nStore } from '../../store/i18nStore';
 
 interface Stats {
   totalCustomers: number;
@@ -19,6 +20,7 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [statsData, setStatsData] = useState<Stats | null>(null);
   const { user } = useAuthStore();
+  const { translations: t } = useI18nStore();
 
   console.log('[Dashboard] 👤 بيانات المستخدم:', user);
 
@@ -60,7 +62,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <Layout>
+      <Layout title={t?.common?.dashboard || "لوحة التحكم"}>
         <div className="flex flex-col items-center justify-center h-64">
           <LoadingSpinner className="animate-spin w-10 h-10 text-blue-500" />
           <p className="mt-4 text-gray-600">جاري تحميل البيانات...</p>
@@ -71,7 +73,7 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <Layout>
+      <Layout title={t?.common?.dashboard || "لوحة التحكم"}>
         <div className="flex flex-col items-center justify-center h-64">
           <div className="text-red-500 mb-4">⚠️ {error}</div>
           <button
@@ -87,7 +89,7 @@ export default function Dashboard() {
 
   if (!statsData) {
     return (
-      <Layout>
+      <Layout title={t?.common?.dashboard || "لوحة التحكم"}>
         <div className="text-center py-8 text-gray-500">
           لا توجد بيانات متاحة
         </div>
@@ -96,7 +98,7 @@ export default function Dashboard() {
   }
 
   return (
-    <Layout>
+    <Layout title={t?.common?.dashboard || "لوحة التحكم"}>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <div className="bg-white p-6 rounded-lg shadow-sm">
           <h3 className="text-lg font-semibold mb-2">👥 إجمالي العملاء</h3>

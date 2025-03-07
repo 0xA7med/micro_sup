@@ -102,10 +102,12 @@ export default function RepresentativeList() {
       const aValue = a[sortConfig.key as keyof User];
       const bValue = b[sortConfig.key as keyof User];
 
+      if (!aValue || !bValue) return 0;
+
       if (sortConfig.direction === 'asc') {
-        return aValue > bValue ? 1 : -1;
+        return String(aValue) > String(bValue) ? 1 : -1;
       } else {
-        return aValue < bValue ? 1 : -1;
+        return String(aValue) < String(bValue) ? 1 : -1;
       }
     });
 
