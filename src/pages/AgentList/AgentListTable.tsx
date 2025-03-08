@@ -19,11 +19,13 @@ interface Agent {
 interface AgentListTableProps {
   agents: Agent[];
   onDeleteClick: (agent: Agent) => void;
+  isLoading?: boolean;
 }
 
 export default function AgentListTable({
   agents,
-  onDeleteClick
+  onDeleteClick,
+  isLoading = false
 }: AgentListTableProps) {
   const { translations: t } = useI18nStore();
   const navigate = useNavigate();

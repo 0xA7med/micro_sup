@@ -25,23 +25,37 @@ interface Customer {
 
 interface AgentCustomersTableProps {
   customers: Customer[];
-  onViewDetails: (customer: Customer) => void;
+  onViewDetails?: (customer: Customer) => void;
+  onCustomerClick?: React.Dispatch<React.SetStateAction<Customer | null>>;
+  searchValue: string;
+  onSearchChange: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function AgentCustomersTable({
   customers,
-  onViewDetails
+  onViewDetails,
+  onCustomerClick,
+  searchValue,
+  onSearchChange
 }: AgentCustomersTableProps) {
   const { translations: t } = useI18nStore();
   const columnHelper = createColumnHelper<Customer>();
-  const [searchValue, setSearchValue] = React.useState('');
+
+  const handleCustomerClick = (customer: Customer) => {
+    if (onViewDetails) {
+      onViewDetails(customer);
+    }
+    if (onCustomerClick) {
+      onCustomerClick(customer);
+    }
+  };
 
   const columns = [
     columnHelper.accessor('customerName', {
       header: t.customer.name,
       cell: (info) => (
         <button
-          onClick={() => onViewDetails(info.row.original)}
+          onClick={() => handleCustomerClick(info.row.original)}
           className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300"
         >
           {info.getValue()}
@@ -73,7 +87,7 @@ export default function AgentCustomersTable({
       data={customers}
       columns={columns}
       searchValue={searchValue}
-      onSearchChange={setSearchValue}
+      onSearchChange={onSearchChange}
     />
   );
 }

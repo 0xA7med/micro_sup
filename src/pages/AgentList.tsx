@@ -30,7 +30,7 @@ export default function AgentList() {
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     direction: 'asc' | 'desc';
-  }>({ key: 'created_at', direction: 'desc' });
+  }>({ key: 'createdAt', direction: 'desc' });
 
   useEffect(() => {
     const fetchAgents = async () => {
@@ -90,6 +90,11 @@ export default function AgentList() {
     .sort((a, b) => {
       const aValue = a[sortConfig.key as keyof User];
       const bValue = b[sortConfig.key as keyof User];
+
+      // التعامل مع القيم null أو undefined
+      if (aValue === undefined && bValue === undefined) return 0;
+      if (aValue === undefined) return 1;
+      if (bValue === undefined) return -1;
 
       if (sortConfig.direction === 'asc') {
         return aValue > bValue ? 1 : -1;
@@ -160,7 +165,7 @@ export default function AgentList() {
                   <th
                     scope="col"
                     className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
-                    onClick={() => handleSort('created_at')}
+                    onClick={() => handleSort('createdAt')}
                   >
                     <div className="flex items-center gap-2">
                       {t.common.createdAt}
@@ -207,7 +212,7 @@ export default function AgentList() {
                         {agent.username}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                        {format(new Date(agent.created_at), 'PPP', {
+                        {format(new Date(agent.createdAt), 'PPP', {
                           locale: dateLocale,
                         })}
                       </td>
@@ -232,11 +237,12 @@ export default function AgentList() {
 
         {showDeleteModal && (
           <DeleteConfirmationModal
+            isOpen={showDeleteModal}
+            onClose={() => setShowDeleteModal(false)}
             onConfirm={handleDelete}
-            onCancel={() => {
-              setShowDeleteModal(false);
-              setAgentToDelete(null);
-            }}
+            onCancel={() => setShowDeleteModal(false)}
+            title="حذف المندوب"
+            description="هل أنت متأكد من رغبتك في حذف هذا المندوب؟"
           />
         )}
       </div>

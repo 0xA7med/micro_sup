@@ -162,15 +162,18 @@ export default function AddCustomer() {
         phone: formData.phone,
         address: formData.address,
         activationCode,
-        subscriptionType: formData.subscriptionType as 'Monthly' | 'Semi-annual' | 'Annual' | 'Permanent',
+        subscriptionType: formData.subscriptionType === 'Monthly' ? 'semi-annual' :
+                          formData.subscriptionType === 'Semi-annual' ? 'semi-annual' :
+                          formData.subscriptionType === 'Annual' ? 'annual' :
+                          formData.subscriptionType === 'Permanent' ? 'permanent' : 'trial',
         versionType: formData.versionType as 'android' | 'pc',
         deviceCount: Number(formData.deviceCount),
-        subscriptionStart: new Date(formData.startDate),
-        subscriptionEnd: formData.endDate ? new Date(formData.endDate) : new Date(formData.startDate),
+        subscriptionStart: new Date(formData.startDate).toISOString(),
+        subscriptionEnd: formData.endDate ? new Date(formData.endDate).toISOString() : new Date(formData.startDate).toISOString(),
         notes: formData.notes,
         createdBy: user.id,
         agentName: user.username,
-        createdAt: new Date(),
+        createdAt: new Date().toISOString(),
       };
 
       console.log('Adding customer:', customerData);

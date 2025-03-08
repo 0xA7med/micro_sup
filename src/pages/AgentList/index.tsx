@@ -5,7 +5,7 @@ import AgentListHeader from './AgentListHeader';
 import AgentListTable from './AgentListTable';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
 import { useI18nStore } from '../../store/i18nStore';
-import { apiClient, agents } from '../../lib/apiClient';
+import Dexie from 'dexie';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 interface Agent {
@@ -31,6 +31,11 @@ const defaultTranslations = {
   }
 };
 
+const db = new Dexie('MyDatabase');
+db.version(1).stores({
+  users: '++id, username, fullName, phone, address, createdAt, customerCount, role'
+});
+
 export default function AgentList() {
   console.log('[AgentList] تهيئة المكون...');
   
@@ -54,21 +59,13 @@ export default function AgentList() {
     setError(null);
 
     try {
-      console.log('[AgentList] استدعاء API...');
-      const result = await agents.getAll();
-      console.log('[AgentList] استجابة API:', result);
-
-      if (!result?.success || !result?.data) {
-        throw new Error(result?.message || 'فشل في تحميل المندوبين');
-      }
-
-      if (!Array.isArray(result.data)) {
-        console.error('[AgentList] خطأ في شكل البيانات:', result.data);
-        throw new Error('البيانات المستلمة ليست مصفوفة!');
-      }
+      console.log('[AgentList] استدعاء قاعدة البيانات...');
+      // استخدام Dexie بدلاً من API
+      const agentsList = await db.users.filter(user => user.role === 'agent').toArray();
+      console.log('[AgentList] استجابة قاعدة البيانات:', agentsList);
 
       // التحقق من صحة بيانات كل مندوب
-      const validAgents = result.data.filter(agent => {
+      const validAgents = agentsList.filter(agent => {
         if (!agent.id || !agent.username || !agent.fullName) {
           console.warn('[AgentList] مندوب غير صالح:', agent);
           return false;
@@ -109,37 +106,20 @@ export default function AgentList() {
     try {
       if (transferCustomers && deletingAgent.customerCount > 0) {
         console.log('[AgentList] البحث عن مدير النظام...');
-        const adminUser = agents.find(agent => agent.role === 'admin');
+        const adminUser = await db.users.get({ role: 'admin' });
         console.log('[AgentList] مدير النظام:', adminUser);
 
         if (!adminUser) {
           throw new Error('لم يتم العثور على مدير النظام لنقل العملاء إليه. يرجى التأكد من وجود مدير نظام نشط.');
         }
 
-        if (!apiClient?.agents?.transferCustomers) {
-          throw new Error('خطأ في تهيئة API: وظيفة نقل العملاء غير متوفرة');
-        }
-
-        console.log('[AgentList] نقل العملاء...');
-        const transferResult = await apiClient.agents.transferCustomers(deletingAgent.id, adminUser.id);
-        console.log('[AgentList] نتيجة نقل العملاء:', transferResult);
-
-        if (!transferResult.success) {
-          throw new Error(transferResult.message || 'فشل في نقل العملاء');
-        }
+        // نقل العملاء إلى مدير النظام
+        await db.users.update(deletingAgent.id, { customerCount: 0 });
+        await db.users.update(adminUser.id, { customerCount: adminUser.customerCount + deletingAgent.customerCount });
       }
 
-      if (!apiClient?.agents?.delete) {
-        throw new Error('خطأ في تهيئة API: وظيفة حذف المندوب غير متوفرة');
-      }
-
-      console.log('[AgentList] حذف المندوب...');
-      const deleteResult = await apiClient.agents.delete(deletingAgent.id);
-      console.log('[AgentList] نتيجة الحذف:', deleteResult);
-
-      if (!deleteResult.success) {
-        throw new Error(deleteResult.message || 'فشل في حذف المندوب');
-      }
+      // حذف المندوب من قاعدة البيانات
+      await db.users.delete(deletingAgent.id);
 
       console.log('[AgentList] تم الحذف بنجاح');
       toast.success(t.agentList.deleteSuccess);

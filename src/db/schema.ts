@@ -8,7 +8,7 @@ db.users.count().then(count => {
       password: 'admin123',
       fullName: 'مدير النظام',
       role: 'admin',
-      createdAt: new Date()
+      createdAt: new Date().toISOString()
     });
   }
 });
