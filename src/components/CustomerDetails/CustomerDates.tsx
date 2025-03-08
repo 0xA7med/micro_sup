@@ -1,5 +1,5 @@
 import React from 'react';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import CustomerField from './CustomerField';
 
 interface CustomerDatesProps {
@@ -10,7 +10,7 @@ interface CustomerDatesProps {
 export default function CustomerDates({ startDate, endDate }: CustomerDatesProps) {
   const formatDate = (dateString: string) => {
     try {
-      return format(new Date(dateString), 'yyyy-MM-dd');
+      return format(parseISO(dateString), 'yyyy-MM-dd');
     } catch (error) {
       console.error('Invalid date:', dateString);
       return 'Invalid date';

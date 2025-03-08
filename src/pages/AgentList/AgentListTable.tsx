@@ -75,10 +75,14 @@ export default function AgentListTable({
     }),
   ];
 
+  const [searchValue, setSearchValue] = React.useState('');
+
   return (
     <Table
       data={agents}
       columns={columns}
+      searchValue={searchValue}
+      onSearchChange={setSearchValue}
     />
   );
 }

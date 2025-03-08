@@ -8,13 +8,13 @@ export interface Customer {
   phone: string;
   address: string;
   activationCode: string;
-  subscription_type: 'semi-annual' | 'annual' | 'permanent' | 'trial';
-  version_type: 'android' | 'pc';
-  device_count: number;
-  subscriptionStart: Date;
-  subscriptionEnd: Date;
+  subscriptionType: 'semi-annual' | 'annual' | 'permanent' | 'trial';
+  versionType: 'android' | 'pc';
+  deviceCount: number;
+  subscriptionStart: string;
+  subscriptionEnd: string;
   notes: string;
-  createdAt: Date;
+  createdAt: string;
   createdBy: number;
   agentName: string;
 }
@@ -25,7 +25,7 @@ export interface User {
   password: string;
   fullName: string;
   role: 'admin' | 'representative';
-  createdAt: Date;
+  createdAt: string;
   email?: string;
   phone?: string;
   address?: string;
@@ -45,22 +45,22 @@ class AppDatabase extends Dexie {
     });
 
     this.version(2).stores({
-      customers: '++id, customerName, businessName, businessType, phone, activationCode, subscriptionEnd, subscription_type, createdAt, createdBy, agentName',
+      customers: '++id, customerName, businessName, businessType, phone, activationCode, subscriptionEnd, subscriptionType, createdAt, createdBy, agentName',
       users: '++id, username, fullName, role, createdAt'
     });
 
     this.version(3).stores({
-      customers: '++id, customerName, businessName, businessType, phone, activationCode, subscriptionEnd, subscription_type, createdAt, createdBy, agentName, version_type',
+      customers: '++id, customerName, businessName, businessType, phone, activationCode, subscriptionEnd, subscriptionType, createdAt, createdBy, agentName, versionType',
       users: '++id, username, fullName, role, createdAt'
     });
 
     this.version(4).stores({
-      customers: '++id, customerName, businessName, businessType, phone, activationCode, subscriptionEnd, subscription_type, createdAt, createdBy, agentName, version_type',
+      customers: '++id, customerName, businessName, businessType, phone, activationCode, subscriptionEnd, subscriptionType, createdAt, createdBy, agentName, versionType',
       users: '++id, username, fullName, role, createdAt'
     });
 
     this.version(5).stores({
-      customers: '++id, customerName, businessName, businessType, phone, activationCode, subscriptionEnd, subscription_type, createdAt, createdBy, agentName, version_type, device_count',
+      customers: '++id, customerName, businessName, businessType, phone, activationCode, subscriptionEnd, subscriptionType, createdAt, createdBy, agentName, versionType, deviceCount',
       users: '++id, username, fullName, role, createdAt, email, phone, address'
     });
 
@@ -69,8 +69,8 @@ class AppDatabase extends Dexie {
       return transaction.table('customers').toCollection().modify((customer: Customer) => {
         if (!customer.businessType) customer.businessType = '';
         if (!customer.activationCode) customer.activationCode = '';
-        if (!customer.subscription_type) customer.subscription_type = 'semi-annual';
-        if (!customer.createdAt) customer.createdAt = new Date();
+        if (!customer.subscriptionType) customer.subscriptionType = 'semi-annual';
+        if (!customer.createdAt) customer.createdAt = new Date().toISOString();
         if (!customer.createdBy) customer.createdBy = 1;
         if (!customer.agentName) customer.agentName = 'admin';
       });
@@ -78,14 +78,14 @@ class AppDatabase extends Dexie {
 
     this.version(3).upgrade(transaction => {
       return transaction.table('customers').toCollection().modify((customer: Customer) => {
-        if (!customer.version_type) customer.version_type = 'android';
+        if (!customer.versionType) customer.versionType = 'android';
       });
     });
 
     this.version(4).upgrade(transaction => {
       return transaction.table('customers').toCollection().modify((customer: Customer) => {
-        if (customer.subscription_type === 'trial') {
-          customer.subscription_type = 'semi-annual';
+        if (customer.subscriptionType === 'trial') {
+          customer.subscriptionType = 'semi-annual';
         }
       });
     });
@@ -109,7 +109,7 @@ class AppDatabase extends Dexie {
             password: 'admin123',
             fullName: 'مدير النظام',
             role: 'admin',
-            createdAt: new Date(),
+            createdAt: new Date().toISOString(),
             email: '',
             phone: '',
             address: ''

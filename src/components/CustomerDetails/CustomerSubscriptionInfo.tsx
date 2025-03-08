@@ -30,8 +30,8 @@ export default function CustomerSubscriptionInfo({
       <CustomerField label="نوع الاشتراك">
         {isEditing ? (
           <select
-            name="subscription_type"
-            value={customer.subscription_type}
+            name="subscriptionType"
+            value={customer.subscriptionType}
             onChange={handleChange}
             className="form-select"
           >
@@ -43,7 +43,7 @@ export default function CustomerSubscriptionInfo({
           </select>
         ) : (
           <p className={`text-sm ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-            {t.subscription[customer.subscription_type]}
+            {t.subscription[customer.subscriptionType as SubscriptionType]}
           </p>
         )}
       </CustomerField>
@@ -55,16 +55,16 @@ export default function CustomerSubscriptionInfo({
               <label
                 key={type}
                 className={`flex items-center gap-2 p-2 rounded cursor-pointer ${
-                  customer.version_type === type
+                  customer.versionType === type
                     ? 'bg-primary-600 text-white'
                     : 'bg-gray-100 dark:bg-gray-800'
                 }`}
               >
                 <input
                   type="radio"
-                  name="version_type"
+                  name="versionType"
                   value={type}
-                  checked={customer.version_type === type}
+                  checked={customer.versionType === type}
                   onChange={handleChange}
                   className="hidden"
                 />
@@ -79,7 +79,7 @@ export default function CustomerSubscriptionInfo({
           </div>
         ) : (
           <p className={`text-sm ${isDarkMode ? 'text-gray-100' : 'text-gray-900'}`}>
-            {customer.version_type.toUpperCase()}
+            {customer.versionType.toUpperCase()}
           </p>
         )}
       </CustomerField>
@@ -87,8 +87,8 @@ export default function CustomerSubscriptionInfo({
       <CustomerField label="عدد الأجهزة">
         <CustomerInput
           type="number"
-          name="device_count"
-          value={customer.device_count}
+          name="deviceCount"
+          value={customer.deviceCount}
           onChange={handleChange}
           min="1"
           isEditing={isEditing}

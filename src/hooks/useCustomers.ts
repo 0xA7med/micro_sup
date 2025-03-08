@@ -57,7 +57,7 @@ export function useCustomers(filter?: 'expiring' | 'active') {
     try {
       const newCustomer = {
         ...customerData,
-        createdAt: new Date()
+        createdAt: new Date().toISOString()
       };
       
       const id = await db.customers.add(newCustomer);

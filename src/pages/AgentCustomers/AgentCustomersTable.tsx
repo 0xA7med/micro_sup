@@ -34,6 +34,7 @@ export default function AgentCustomersTable({
 }: AgentCustomersTableProps) {
   const { translations: t } = useI18nStore();
   const columnHelper = createColumnHelper<Customer>();
+  const [searchValue, setSearchValue] = React.useState('');
 
   const columns = [
     columnHelper.accessor('customerName', {
@@ -71,6 +72,8 @@ export default function AgentCustomersTable({
     <Table
       data={customers}
       columns={columns}
+      searchValue={searchValue}
+      onSearchChange={setSearchValue}
     />
   );
 }
